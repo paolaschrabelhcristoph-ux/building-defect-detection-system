@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant User as 用户
+participant Browser as 浏览器
+participant Controller as BorrowRecordController
+participant Service as BorrowRecordService
+participant BookService as BookService
+participant UserRepository as UserRepository
+participant BookRepository as BookRepository
+participant BorrowRecordRepository as BorrowRecordRepository
+
+User->>Browser: 点击"借书"按钮
+Browser->>Controller: 发送借书请求 (POST /borrow/borrow)
+Controller->>Service: 调用 borrowBook(userId, bookId, days)
+Service->>UserRepository: 查询用户信息
+UserRepository-->>Service: 返回用户信息
+Service->>BookRepository: 查询图书信息
+BookRepository-->>Service: 返回图书信息
+Service->>BookService: 检查图书是否可借阅
+BookService-->>Service: 返回借阅结果
+alt 图书可借阅
+    Service->>BorrowRecordRepository: 保存借阅记录
+    BorrowRecordRepository-->>Service: 返回借阅记录
+    Service-->>Controller: 返回借阅记录
+    Controller-->>Browser: 重定向到借阅列表
+    Browser-->>User: 显示借阅成功
+else 图书不可借阅
+    Service-->>Controller: 抛出异常
+    Controller->>Browser: 返回错误页面
+    Browser-->>User: 显示错误信息
+end
+
+
+@enduml

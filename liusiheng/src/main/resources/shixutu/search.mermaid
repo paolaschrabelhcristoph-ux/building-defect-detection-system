@@ -1,0 +1,19 @@
+sequenceDiagram
+    participant User as 用户
+    participant Browser as 浏览器
+    participant Controller as BookController
+    participant Service as BookService
+    participant Repository as BookRepository
+
+    User->>Browser: 在搜索框输入关键词
+    Browser->>Controller: 发送搜索请求 (GET /books?keyword=xxx)
+    Controller->>Service: 调用 searchBooks(keyword)
+    Service->>Repository: 调用 searchBooks(keyword)
+    Repository-->>Service: 返回搜索结果
+    Service-->>Controller: 返回图书列表
+    Controller->>Service: 获取所有分类
+    Service->>Repository: 查询所有分类
+    Repository-->>Service: 返回分类列表
+    Service-->>Controller: 返回分类列表
+    Controller-->>Browser: 返回图书列表页面
+    Browser-->>User: 显示搜索结果

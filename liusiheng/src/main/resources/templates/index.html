@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书管理系统 - 首页</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .dashboard-card {
+            transition: transform 0.3s ease;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        .main-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .stats-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-3px);
+        }
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-book"></i> 图书管理系统
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/books"><i class="bi bi-book"></i> 图书管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users"><i class="bi bi-people"></i> 用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> 分类管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/borrow"><i class="bi bi-journal-arrow-up"></i> 借阅管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-header">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="display-4 fw-bold">图书管理系统</h1>
+            <p class="lead">一个功能完善的图书管理平台</p>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- 图书管理卡片 -->
+        <div class="col-md-3 mb-4">
+            <a href="/books" class="text-decoration-none">
+                <div class="card dashboard-card text-center border-primary shadow">
+                    <div class="card-body">
+                        <div class="card-icon text-primary">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <h5 class="card-title">图书管理</h5>
+                        <p class="card-text text-muted">管理图书信息</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 用户管理卡片 -->
+        <div class="col-md-3 mb-4">
+            <a href="/users" class="text-decoration-none">
+                <div class="card dashboard-card text-center border-success shadow">
+                    <div class="card-body">
+                        <div class="card-icon text-success">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h5 class="card-title">用户管理</h5>
+                        <p class="card-text text-muted">管理用户信息</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 分类管理卡片 -->
+        <div class="col-md-3 mb-4">
+            <a href="/categories" class="text-decoration-none">
+                <div class="card dashboard-card text-center border-info shadow">
+                    <div class="card-body">
+                        <div class="card-icon text-info">
+                            <i class="bi bi-tags"></i>
+                        </div>
+                        <h5 class="card-title">分类管理</h5>
+                        <p class="card-text text-muted">管理图书分类</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 借阅管理卡片 -->
+        <div class="col-md-3 mb-4">
+            <a href="/borrow" class="text-decoration-none">
+                <div class="card dashboard-card text-center border-warning shadow">
+                    <div class="card-body">
+                        <div class="card-icon text-warning">
+                            <i class="bi bi-journal-arrow-up"></i>
+                        </div>
+                        <h5 class="card-title">借阅管理</h5>
+                        <p class="card-text text-muted">管理借阅记录</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- 快速操作区域 -->
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning-charge"></i> 快速操作</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="/books/add" class="btn btn-primary w-100">
+                                <i class="bi bi-plus-circle"></i> 添加图书
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/users/add" class="btn btn-success w-100">
+                                <i class="bi bi-person-plus"></i> 添加用户
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/categories/add" class="btn btn-info w-100">
+                                <i class="bi bi-tag"></i> 添加分类
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="/borrow/add" class="btn btn-warning w-100">
+                                <i class="bi bi-journal-text"></i> 添加借阅
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- 系统信息 -->
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> 系统统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center stats-card p-3">
+                                <h3 class="text-primary">150+</h3>
+                                <p class="text-muted mb-0">图书总数</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center stats-card p-3">
+                                <h3 class="text-success">50+</h3>
+                                <p class="text-muted mb-0">用户数量</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center stats-card p-3">
+                                <h3 class="text-warning">200+</h3>
+                                <p class="text-muted mb-0">借阅记录</p>
+                            </div>
+                        </div>
+                        <!-- 在系统统计部分添加类别统计 -->
+                        <div class="col-md-3">
+                            <div class="text-center stats-card p-3">
+                                <h3 class="text-info" th:text="${#lists.size(categories)}">10+</h3>
+                                <p class="text-muted mb-0">分类数量</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer py-4">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2023 图书管理系统. 保留所有权利.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

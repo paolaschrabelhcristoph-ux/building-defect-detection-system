@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant User as 用户
+    participant Browser as 浏览器
+    participant Controller as BorrowRecordController
+    participant Service as BorrowRecordService
+    participant BookService as BookService
+    participant Repository as BorrowRecordRepository
+
+    User->>Browser: 点击"还书"按钮
+    Browser->>Controller: 发送还书请求 (POST /borrow/return/{id})
+    Controller->>Service: 调用 returnBook(recordId)
+    Service->>Repository: 根据ID查询借阅记录
+    Repository-->>Service: 返回借阅记录
+    alt 借阅记录存在且状态为借阅中
+        Service->>Service: 计算罚款
+        Service->>BookService: 更新图书可用数量
+        BookService-->>Service: 返回更新结果
+        Service->>Repository: 更新借阅记录状态
+        Repository-->>Service: 返回更新后的记录
+        Service-->>Controller: 返回成功信息
+        Controller-->>Browser: 返回成功响应
+        Browser-->>User: 显示还书成功
+    else 借阅记录不存在或状态异常
+        Service-->>Controller: 抛出异常
+        Controller-->>Browser: 返回错误响应
+        Browser-->>User: 显示错误信息
+    end

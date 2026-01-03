@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>借阅记录管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-book"></i> 图书管理系统
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="bi bi-house"></i> 首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/books"><i class="bi bi-book"></i> 图书管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/users"><i class="bi bi-people"></i> 用户管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/categories"><i class="bi bi-tags"></i> 分类管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/borrow"><i class="bi bi-journal-arrow-up"></i> 借阅管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-center mb-0">借阅记录管理</h1>
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-house"></i> 返回首页
+        </a>
+    </div>
+
+    <div class="d-flex justify-content-between mb-4">
+        <a href="/borrow/add" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> 添加借阅
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>借阅者</th>
+                <th>图书</th>
+                <th>借阅日期</th>
+                <th>应还日期</th>
+                <th>实际还书日期</th>
+                <th>状态</th>
+                <th>罚款</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(records)}">
+                <td colspan="9" class="text-center">没有找到借阅记录</td>
+            </tr>
+            <tr th:each="record : ${records}">
+                <td th:text="${record.id}"></td>
+                <td th:text="${record.user.fullName}"></td>
+                <td th:text="${record.book.title}"></td>
+                <td th:text="${#temporals.format(record.borrowDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${#temporals.format(record.dueDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:if="${record.returnDate}" th:text="${#temporals.format(record.returnDate, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:unless="${record.returnDate}">-</td>
+                <td>
+                    <span th:if="${record.status.name()} == 'BORROWED'" class="badge bg-primary">借阅中</span>
+                    <span th:if="${record.status.name()} == 'RETURNED'" class="badge bg-success">已归还</span>
+                    <span th:if="${record.status.name()} == 'OVERDUE'" class="badge bg-danger">逾期</span>
+                </td>
+                <td th:text="${record.fine} + '元'"></td>
+                <td>
+                    <button class="btn btn-sm btn-warning return-btn" th:attr="data-id=${record.id}"
+                            th:if="${record.status.name()} == 'BORROWED'">还书</button>
+                    <span th:unless="${record.status.name()} == 'BORROWED'">-</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <a href="/" class="btn btn-outline-primary">
+            <i class="bi bi-house"></i> 返回首页
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.return-btn').click(function() {
+            var recordId = $(this).data('id');
+            $.post('/borrow/return/' + recordId, function(response) {
+                alert(response);
+                location.reload();
+            }).fail(function(xhr) {
+                alert(xhr.responseText);
+            });
+        });
+    });
+</script>
+</body>
+</html>

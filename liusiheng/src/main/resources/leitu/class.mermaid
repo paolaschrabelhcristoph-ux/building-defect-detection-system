@@ -1,0 +1,151 @@
+classDiagram
+    class User {
+        -Long id
+        -String username
+        -String password
+        -String email
+        -String fullName
+        -String phone
+        -UserType userType
+        -Integer status
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        +enum UserType{ADMIN, USER}
+    }
+
+    class Book {
+        -Long id
+        -String title
+        -String author
+        -String isbn
+        -String description
+        -Integer totalCopies
+        -Integer availableCopies
+        -Integer borrowCount
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -Category category
+    }
+
+    class Category {
+        -Long id
+        -String name
+        -String description
+        -LocalDateTime createdAt
+    }
+
+    class BorrowRecord {
+        -Long id
+        -LocalDateTime borrowDate
+        -LocalDateTime dueDate
+        -LocalDateTime returnDate
+        -BorrowStatus status
+        -BigDecimal fine
+        -LocalDateTime createdAt
+        -LocalDateTime updatedAt
+        -User user
+        -Book book
+        +enum BorrowStatus{BORROWED, RETURNED, OVERDUE}
+    }
+
+    class BookDto {
+        -Long id
+        -String title
+        -String author
+        -String isbn
+        -String description
+        -Integer totalCopies
+        -Long categoryId
+    }
+
+    class UserService {
+        -UserRepository userRepository
+        +List~User~ getAllUsers()
+        +User getUserById(Long id)
+        +User saveUser(User user)
+        +void deleteUser(Long id)
+        +User findByUsername(String username)
+        +boolean isUsernameExists(String username, Long userId)
+    }
+
+    class BookService {
+        -BookRepository bookRepository
+        -CategoryService categoryService
+        +List~Book~ getAllBooks()
+        +List~Book~ searchBooks(String keyword)
+        +List~Book~ getAvailableBooks()
+        +Optional~Book~ getBookById(Long id)
+        +Book saveBook(Book book)
+        +void deleteBook(Long id)
+        +boolean isIsbnExists(String isbn, Long bookId)
+        +boolean borrowBook(Long bookId)
+        +boolean returnBook(Long bookId)
+    }
+
+    class CategoryService {
+        -CategoryRepository categoryRepository
+        +List~Category~ getAllCategories()
+        +Category getCategoryById(Long id)
+        +Category saveCategory(Category category)
+        +void deleteCategory(Long id)
+    }
+
+    class BorrowRecordService {
+        -BorrowRecordRepository borrowRecordRepository
+        -UserService userService
+        -BookService bookService
+        +List~BorrowRecord~ getAllBorrowRecords()
+        +List~BorrowRecord~ getBorrowRecordsByUserId(Long userId)
+        +List~BorrowRecord~ getBorrowRecordsByBookId(Long bookId)
+        +List~BorrowRecord~ getActiveBorrowsByUserId(Long userId)
+        +List~BorrowRecord~ getOverdueRecords()
+        +BorrowRecord borrowBook(Long userId, Long bookId, int days)
+        +BorrowRecord returnBook(Long recordId)
+        +Long countActiveBorrowsByUserId(Long userId)
+    }
+
+    class UserRepository {
+        +User findByUsername(String username)
+        +List~User~ findByUserType(User.UserType userType)
+        +boolean existsByUsername(String username)
+        +boolean existsByEmail(String email)
+    }
+
+    class BookRepository {
+        +List~Book~ findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(String title, String author)
+        +boolean existsByIsbn(String isbn)
+        +List~Book~ findAvailableBooks()
+        +List~Book~ searchBooks(String keyword)
+        +List~Book~ findByCategoryId(Long categoryId)
+    }
+
+    class CategoryRepository {
+        +boolean existsByName(String name)
+        +List~Category~ findByNameContainingIgnoreCase(String name)
+        +Long countBooksByCategoryId(Long categoryId)
+    }
+
+    class BorrowRecordRepository {
+        +List~BorrowRecord~ findByUserId(Long userId)
+        +List~BorrowRecord~ findByBookId(Long bookId)
+        +List~BorrowRecord~ findByStatus(BorrowStatus status)
+        +List~BorrowRecord~ findActiveBorrowsByUserId(Long userId)
+        +List~BorrowRecord~ findOverdueRecords(LocalDateTime date)
+        +Long countActiveBorrowsByUserId(Long userId)
+    }
+
+    User ||--|| BorrowRecord : "1 to many"
+    Book ||--|| BorrowRecord : "1 to many"
+    Category ||--|| Book : "1 to many"
+    User ||--|| UserRepository : "implements"
+    Book ||--|| BookRepository : "implements"
+    Category ||--|| CategoryRepository : "implements"
+    BorrowRecord ||--|| BorrowRecordRepository : "implements"
+    UserService ||--o{ User : "manages"
+    BookService ||--o{ Book : "manages"
+    CategoryService ||--o{ Category : "manages"
+    BorrowRecordService ||--o{ BorrowRecord : "manages"
+    UserService ||--|| BorrowRecordService : "uses"
+    BookService ||--|| BorrowRecordService : "uses"
+    CategoryService ||--|| BookService : "uses"
+    BookDto ..> Book : "DTO for"

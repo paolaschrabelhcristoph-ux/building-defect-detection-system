@@ -1,0 +1,39 @@
+sequenceDiagram
+    participant User as 用户
+    participant Browser as 浏览器
+    participant Controller as BookController
+    participant Service as BookService
+    participant CategoryService as CategoryService
+    participant CategoryRepository as CategoryRepository
+    participant BookRepository as BookRepository
+
+    User->>Browser: 点击"添加图书"
+    Browser->>Controller: 请求添加图书页面 (GET /books/add)
+    Controller->>CategoryService: 获取所有分类
+    CategoryService->>CategoryRepository: 查询所有分类
+    CategoryRepository-->>CategoryService: 返回分类列表
+    CategoryService-->>Controller: 返回分类列表
+    Controller-->>Browser: 返回添加图书页面
+    Browser-->>User: 显示添加图书表单
+
+    User->>Browser: 填写图书信息并提交
+    Browser->>Controller: 发送保存请求 (POST /books/save)
+    Controller->>Service: 检查ISBN是否存在
+    Service->>BookRepository: 查询ISBN是否存在
+    BookRepository-->>Service: 返回查询结果
+    Service-->>Controller: 返回检查结果
+    alt ISBN不存在
+        Controller->>CategoryService: 获取分类信息
+        CategoryService->>CategoryRepository: 查询分类
+        CategoryRepository-->>CategoryService: 返回分类信息
+        CategoryService-->>Controller: 返回分类信息
+        Controller->>Service: 保存图书
+        Service->>BookRepository: 保存图书实体
+        BookRepository-->>Service: 返回保存的图书
+        Service-->>Controller: 返回保存结果
+        Controller-->>Browser: 重定向到图书列表
+        Browser-->>User: 显示图书列表
+    else ISBN已存在
+        Controller-->>Browser: 返回错误表单
+        Browser-->>User: 显示错误信息
+    end

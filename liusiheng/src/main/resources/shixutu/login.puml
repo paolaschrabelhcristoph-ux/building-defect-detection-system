@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant User as 用户
+participant Browser as 浏览器
+participant Controller as UserController/LoginController
+participant Service as UserService
+participant UserRepository as UserRepository
+
+User->>Browser: 访问登录页面
+Browser->>Controller: 请求登录页面
+Controller-->>Browser: 返回登录页面
+Browser-->>User: 显示登录表单
+
+User->>Browser: 输入用户名密码并提交
+Browser->>Controller: 发送登录请求
+Controller->>Service: 调用用户验证方法
+Service->>UserRepository: 根据用户名查询用户
+UserRepository-->>Service: 返回用户信息
+Service-->>Controller: 返回验证结果
+alt 用户存在且密码正确
+    Controller-->>Browser: 重定向到主页
+    Browser-->>User: 显示主页
+else 用户不存在或密码错误
+    Controller-->>Browser: 返回登录页面带错误信息
+    Browser-->>User: 显示错误信息
+end
+
+@enduml
